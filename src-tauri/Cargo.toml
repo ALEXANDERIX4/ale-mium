@@ -1,0 +1,15 @@
+[package]
+name = "alenium"
+version = "1.0.0"
+description = "Alenium Browser"
+authors = ["ALEXANDERIX4"]
+edition = "2021"
+
+[dependencies]
+tauri = { version = "1.5", features = ["all"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0" }
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
