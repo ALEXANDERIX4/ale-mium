@@ -1,0 +1,43 @@
+{
+  "build": {
+    "beforeDevCommand": "",
+    "beforeBuildCommand": "",
+    "devPath": "../index.html",
+    "distDir": "../"
+  },
+  "package": {
+    "productName": "Alenium",
+    "version": "1.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": true
+    },
+    "bundle": {
+      "active": true,
+      "category": "DeveloperTool",
+      "copyright": "",
+      "deb": { "depends": [] },
+      "externalBin": [],
+      "icon": [],
+      "identifier": "com.alex.alenium",
+      "resources": [],
+      "shortDescription": "",
+      "targets": ["msi", "nsis"],
+      "windows": { "certificateSmime": null }
+    },
+    "security": { "csp": null },
+    "windows": [
+      {
+        "title": "Alenium",
+        "width": 1320,
+        "height": 840,
+        "minWidth": 500,
+        "minHeight": 400,
+        "backgroundColor": "#1f1f1f",
+        "decorations": true,
+        "center": true
+      }
+    ]
+  }
+}
