@@ -1,0 +1,8 @@
+{
+  "name": "alenium",
+  "version": "1.0.0",
+  "description": "Alenium Browser",
+  "scripts": {
+    "tauri": "tauri"
+  }
+}
