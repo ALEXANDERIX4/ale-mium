@@ -24,7 +24,7 @@
       "resources": [],
       "shortDescription": "",
       "targets": ["msi", "nsis"],
-      "windows": { "certificateSmime": null }
+      "windows": {}
     },
     "security": { "csp": null },
     "windows": [
@@ -34,7 +34,6 @@
         "height": 840,
         "minWidth": 500,
         "minHeight": 400,
-        "backgroundColor": "#1f1f1f",
         "decorations": true,
         "center": true
       }
