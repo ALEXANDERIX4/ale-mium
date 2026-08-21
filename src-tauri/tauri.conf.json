@@ -26,7 +26,9 @@
       "targets": ["msi", "nsis"],
       "windows": {}
     },
-    "security": { "csp": null },
+    "security": { "csp": null }
+  },
+  "app": {
     "windows": [
       {
         "title": "Alenium",
@@ -37,6 +39,9 @@
         "decorations": true,
         "center": true
       }
-    ]
+    ],
+    "security": {
+      "csp": null
+    }
   }
 }
