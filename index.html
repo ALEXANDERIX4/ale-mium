@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Alenium</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: #1f1f1f;
+      color: #e3e3e3;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Tab Strip */
+    .chrome-tab-strip {
+      display: flex;
+      align-items: flex-end;
+      height: 38px;
+      background: #161719;
+      padding: 0 10px;
+      gap: 6px;
+    }
+    .app-brand-icon {
+      width: 18px;
+      height: 18px;
+      margin-bottom: 8px;
+      margin-right: 4px;
+    }
+    .tab-list {
+      display: flex;
+      gap: 3px;
+      align-items: flex-end;
+      overflow-x: auto;
+      height: 100%;
+    }
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      height: 32px;
+      background: #2b2b2b;
+      color: #aaa;
+      border-radius: 8px 8px 0 0;
+      font-size: 0.8rem;
+      cursor: pointer;
+      min-width: 140px;
+      max-width: 200px;
+    }
+    .tab.active {
+      background: #1f1f1f;
+      color: #fff;
+    }
+    .tab-title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tab-close {
+      border: none;
+      background: transparent;
+      color: #aaa;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tab-close:hover { background: #444; color: #fff; }
+    
+    .btn-new-tab {
+      background: transparent;
+      border: none;
+      color: #aaa;
+      font-size: 1.2rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+    .btn-new-tab:hover { background: #333; color: #fff; }
+
+    /* Toolbar */
+    .chrome-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: #1f1f1f;
+      border-bottom: 1px solid #161719;
+    }
+    .nav-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: #c7c7c7;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+    }
+    .nav-btn:hover { background: #3c4043; color: #fff; }
+
+    /* Search Box */
+    .omnibox-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: #161719;
+      border-radius: 20px;
+      padding: 0 14px;
+      height: 32px;
+      border: 1px solid transparent;
+    }
+    .omnibox-wrapper:focus-within {
+      background: #111;
+      border-color: #8ab4f8;
+    }
+    .omnibox-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    #viewsContainer {
+      flex: 1;
+      position: relative;
+      background: #1f1f1f;
+    }
+    iframe {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+      background: #fff;
+    }
+    iframe.active { display: block; }
+
+    /* Modals */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .panel {
+      background: #1f1f1f;
+      border-radius: 12px;
+      width: 480px;
+      border: 1px solid #3c4043;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .settings-desc { font-size: 0.75rem; color: #888; }
+    .settings-input {
+      background: #161719;
+      border: 1px solid #3c4043;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      outline: none;
+    }
+    .btn-action {
+      background: #8ab4f8;
+      border: none;
+      color: #1f1f1f;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn-danger { background: #ea4335; color: #fff; }
+
+    .history-list {
+      max-height: 280px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .history-item {
+      padding: 8px 10px;
+      background: #161719;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .history-item:hover { background: #282a2d; }
+    .history-title { font-size: 0.85rem; font-weight: bold; }
+    .history-url { font-size: 0.75rem; color: #8ab4f8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  </style>
+</head>
+<body>
+
+  <div class="chrome-tab-strip">
+    <svg class="app-brand-icon" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="21.5" fill="#1976D2"/>
+      <circle cx="24" cy="24" r="7.5" fill="#FFFFFF"/>
+      <circle cx="24" cy="24" r="6" fill="#1976D2"/>
+    </svg>
+    <div class="tab-list" id="tabList"></div>
+    <button class="btn-new-tab" id="btnNewTab" title="New Tab (Ctrl+T)">+</button>
+  </div>
+
+  <div class="chrome-toolbar">
+    <button class="nav-btn" id="btnBack" title="Back">←</button>
+    <button class="nav-btn" id="btnForward" title="Forward">→</button>
+    <button class="nav-btn" id="btnReload" title="Reload">⟳</button>
+    <button class="nav-btn" id="btnHome" title="Home">🏠</button>
+
+    <div class="omnibox-wrapper">
+      <input type="text" class="omnibox-input" id="omnibox" placeholder="Search with Alenium or type URL" />
+    </div>
+
+    <button class="nav-btn" id="btnDark" title="Toggle Dark Mode">🌙</button>
+    <button class="nav-btn" id="btnHistory" title="History (Ctrl+H)">🕒</button>
+    <button class="nav-btn" id="btnSettings" title="Settings">⚙</button>
+  </div>
+
+  <div id="viewsContainer"></div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="panel">
+      <h3>Alenium Settings</h3>
+      <div class="settings-row">
+        <div>
+          <div>Search Engine</div>
+          <div class="settings-desc">Provider for omnibox searches</div>
+        </div>
+        <select class="settings-input" id="cfgEngine">
+          <option value="brave">Brave</option>
+          <option value="google">Google</option>
+          <option value="duckduckgo">DuckDuckGo</option>
+        </select>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div>Home URL</div>
+          <div class="settings-desc">Default landing page</div>
+        </div>
+        <input type="text" class="settings-input" id="cfgHome" style="width:200px;" />
+      </div>
+      <div class="settings-row">
+        <div>
+          <div>Clear Storage</div>
+          <div class="settings-desc">Wipe all local web cookies & cache</div>
+        </div>
+        <button class="btn-action btn-danger" id="btnClearStorage">Clear Data</button>
+      </div>
+      <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+        <button class="btn-action" id="btnSaveSettings">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div class="modal-backdrop" id="historyModal">
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>History</h3>
+        <button class="btn-action btn-danger" id="btnClearHistory" style="padding: 4px 8px; font-size:0.75rem;">Clear</button>
+      </div>
+      <div class="history-list" id="historyListContainer"></div>
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn-action" id="btnCloseHistory">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabList = document.getElementById('tabList');
+      const viewsContainer = document.getElementById('viewsContainer');
+      const omnibox = document.getElementById('omnibox');
+
+      const btnNewTab = document.getElementById('btnNewTab');
+      const btnBack = document.getElementById('btnBack');
+      const btnForward = document.getElementById('btnForward');
+      const btnReload = document.getElementById('btnReload');
+      const btnHome = document.getElementById('btnHome');
+      const btnDark = document.getElementById('btnDark');
+
+      const btnHistory = document.getElementById('btnHistory');
+      const historyModal = document.getElementById('historyModal');
+      const historyListContainer = document.getElementById('historyListContainer');
+      const btnCloseHistory = document.getElementById('btnCloseHistory');
+      const btnClearHistory = document.getElementById('btnClearHistory');
+
+      const btnSettings = document.getElementById('btnSettings');
+      const settingsModal = document.getElementById('settingsModal');
+      const btnSaveSettings = document.getElementById('btnSaveSettings');
+      const btnClearStorage = document.getElementById('btnClearStorage');
+      const cfgEngine = document.getElementById('cfgEngine');
+      const cfgHome = document.getElementById('cfgHome');
+
+      let tabs = [];
+      let activeTabId = null;
+
+      let config = {
+        engine: localStorage.getItem('cfg_engine') || 'brave',
+        home: localStorage.getItem('cfg_home') || 'https://search.brave.com',
+        darkmode: localStorage.getItem('cfg_darkmode') === 'true'
+      };
+
+      const engines = {
+        brave: 'https://search.brave.com/search?q=',
+        google: 'https://www.google.com/search?q=',
+        duckduckgo: 'https://duckduckgo.com/?q='
+      };
+
+      function addHistory(title, url) {
+        if (!url || url.startsWith('about:')) return;
+        let history = JSON.parse(localStorage.getItem('browser_history') || '[]');
+        if (history.length > 0 && history[0].url === url) return;
+        history.unshift({ title: title || url, url });
+        if (history.length > 60) history.pop();
+        localStorage.setItem('browser_history', JSON.stringify(history));
+      }
+
+      function renderHistory() {
+        const history = JSON.parse(localStorage.getItem('browser_history') || '[]');
+        historyListContainer.innerHTML = '';
+        if (history.length === 0) {
+          historyListContainer.innerHTML = '<div style="color:#777; padding:10px; text-align:center;">No history recorded</div>';
+          return;
+        }
+        history.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'history-item';
+          row.innerHTML = `<div class="history-title">${item.title}</div><div class="history-url">${item.url}</div>`;
+          row.onclick = () => { createTab(item.url); historyModal.style.display = 'none'; };
+          historyListContainer.appendChild(row);
+        });
+      }
+
+      function createTab(targetUrl = config.home) {
+        const id = 'tab_' + Date.now();
+
+        const tabEl = document.createElement('div');
+        tabEl.className = 'tab';
+        tabEl.innerHTML = `<span class="tab-title">New Tab</span><button class="tab-close">&times;</button>`;
+
+        const iframe = document.createElement('iframe');
+        iframe.src = targetUrl;
+
+        viewsContainer.appendChild(iframe);
+        tabList.appendChild(tabEl);
+        tabs.push({ id, tabEl, iframe });
+
+        tabEl.onclick = (e) => {
+          if (!e.target.classList.contains('tab-close')) selectTab(id);
+        };
+        tabEl.querySelector('.tab-close').onclick = (e) => {
+          e.stopPropagation();
+          closeTab(id);
+        };
+
+        iframe.onload = () => {
+          try {
+            const currentUrl = iframe.contentWindow.location.href;
+            const currentTitle = iframe.contentDocument.title || currentUrl;
+            tabEl.querySelector('.tab-title').textContent = currentTitle;
+            if (activeTabId === id) omnibox.value = currentUrl;
+            addHistory(currentTitle, currentUrl);
+          } catch (err) {
+            // Cross-origin restriction fallback
+            if (activeTabId === id) omnibox.value = iframe.src;
+          }
+        };
+
+        selectTab(id);
+      }
+
+      function selectTab(id) {
+        activeTabId = id;
+        tabs.forEach(t => {
+          const match = t.id === id;
+          t.tabEl.classList.toggle('active', match);
+          t.iframe.classList.toggle('active', match);
+          if (match) {
+            try {
+              omnibox.value = t.iframe.contentWindow.location.href;
+            } catch {
+              omnibox.value = t.iframe.src;
+            }
+          }
+        });
+      }
+
+      function closeTab(id) {
+        if (tabs.length === 1) return;
+        const idx = tabs.findIndex(t => t.id === id);
+        tabs[idx].tabEl.remove();
+        tabs[idx].iframe.remove();
+        tabs.splice(idx, 1);
+        if (activeTabId === id) selectTab(tabs[Math.max(0, idx - 1)].id);
+      }
+
+      function getActiveIframe() {
+        const t = tabs.find(t => t.id === activeTabId);
+        return t ? t.iframe : null;
+      }
+
+      function navigate() {
+        const input = omnibox.value.trim();
+        const iframe = getActiveIframe();
+        if (!input || !iframe) return;
+
+        const isUrl = input.includes('.') && !input.includes(' ') && !input.startsWith('http');
+        if (input.startsWith('http://') || input.startsWith('https://')) {
+          iframe.src = input;
+        } else if (isUrl) {
+          iframe.src = 'https://' + input;
+        } else {
+          iframe.src = engines[config.engine] + encodeURIComponent(input);
+        }
+      }
+
+      btnNewTab.onclick = () => createTab();
+      btnBack.onclick = () => { const f = getActiveIframe(); try { f.contentWindow.history.back(); } catch(e){} };
+      btnForward.onclick = () => { const f = getActiveIframe(); try { f.contentWindow.history.forward(); } catch(e){} };
+      btnReload.onclick = () => { const f = getActiveIframe(); if (f) f.src = f.src; };
+      btnHome.onclick = () => { const f = getActiveIframe(); if (f) f.src = config.home; };
+
+      btnDark.onclick = () => {
+        config.darkmode = !config.darkmode;
+        localStorage.setItem('cfg_darkmode', config.darkmode);
+        btnDark.style.opacity = config.darkmode ? '1' : '0.4';
+      };
+
+      omnibox.onkeydown = (e) => { if (e.key === 'Enter') navigate(); };
+
+      btnHistory.onclick = () => { renderHistory(); historyModal.style.display = 'flex'; };
+      btnCloseHistory.onclick = () => { historyModal.style.display = 'none'; };
+      btnClearHistory.onclick = () => { localStorage.removeItem('browser_history'); renderHistory(); };
+
+      btnSettings.onclick = () => {
+        cfgEngine.value = config.engine;
+        cfgHome.value = config.home;
+        settingsModal.style.display = 'flex';
+      };
+
+      btnSaveSettings.onclick = () => {
+        config.engine = cfgEngine.value;
+        config.home = cfgHome.value;
+        localStorage.setItem('cfg_engine', config.engine);
+        localStorage.setItem('cfg_home', config.home);
+        settingsModal.style.display = 'none';
+      };
+
+      btnClearStorage.onclick = () => {
+        localStorage.clear();
+        alert('All storage cleared.');
+      };
+
+      window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 't') { e.preventDefault(); createTab(); }
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'w') { e.preventDefault(); if (activeTabId) closeTab(activeTabId); }
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'h') { e.preventDefault(); btnHistory.click(); }
+      });
+
+      btnDark.style.opacity = config.darkmode ? '1' : '0.4';
+      createTab();
+    });
+  </script>
+</body>
+</html>
